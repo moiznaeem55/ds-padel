@@ -988,87 +988,6 @@ a{color:inherit;text-decoration:none}
 </section></div><div class="footer">October Padel · Court 1 · Dubai South – Central Park</div>
 </div>
 <script>
-(function(){
-  const weatherLabel=document.getElementById('weatherLabel');
-  const weatherValue=document.getElementById('weatherValue');
-  const weatherMeta=document.getElementById('weatherMeta');
-
-    const games=[
-    {date:'2026-10-12',time:'9–10 PM'},
-    {date:'2026-10-13',time:'9–10 PM'},
-    {date:'2026-10-14',time:'9–10 PM'},
-    {date:'2026-10-15',time:'9–10 PM'},
-    {date:'2026-10-16',time:'9–10 PM'},
-    {date:'2026-10-19',time:'9–10 PM'},
-    {date:'2026-10-20',time:'9–10 PM'},
-    {date:'2026-10-21',time:'9–10 PM'},
-    {date:'2026-10-22',time:'8–10 PM'},
-    {date:'2026-10-23',time:'9–10 PM'}
-  ];
-
-  function nextGame(){
-    const now=new Date();
-    return games.find(g=>new Date(g.date+'T23:59:59+04:00')>=now);
-  }
-
-  function formatDate(date){
-    return new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',timeZone:'Asia/Dubai'}).format(new Date(date+'T12:00:00+04:00'));
-  }
-
-  async function loadWeather(){
-    const game=nextGame();
-    if(!game){
-      weatherLabel.textContent='GAME CONDITIONS';
-      weatherValue.textContent='No upcoming games';
-      weatherMeta.textContent='Dubai South';
-      return;
-    }
-
-    const labelDate=formatDate(game.date).toUpperCase();
-    weatherLabel.textContent='GAME CONDITIONS · NEXT GAME · '+labelDate+' · '+game.time;
-    weatherValue.textContent='☀️ Temperature · 💧 Humidity — Forecast available closer to game';
-    weatherMeta.textContent='Dubai South';
-
-    const selected=new Date(game.date+'T12:00:00+04:00');
-    const now=new Date();
-    const diff=Math.ceil((selected-now)/86400000);
-    if(diff>16) return;
-
-    const url='https://api.open-meteo.com/v1/forecast?latitude=24.8964&longitude=55.1616&hourly=temperature_2m,relative_humidity_2m&timezone=Asia%2FDubai&forecast_days=16';
-    const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),3500));
-    try{
-      const r=await Promise.race([fetch(url,{cache:'no-store'}),timeout]);
-      if(!r.ok) throw new Error('weather');
-      const data=await r.json();
-      const times=data.hourly.time, temps=data.hourly.temperature_2m, hum=data.hourly.relative_humidity_2m;
-      const idx=times.findIndex(t=>t===game.date+'T21:00');
-      if(idx<0) throw new Error('hour');
-      weatherValue.textContent='☀️ '+Math.round(temps[idx])+'°C · 💧 '+Math.round(hum[idx])+'% Humidity';
-      weatherMeta.textContent='Dubai South · '+formatDate(game.date)+' '+game.time;
-    }catch(e){
-      weatherValue.textContent='Forecast unavailable right now';
-      weatherMeta.textContent='Dubai South · check closer to game time';
-    }
-  }
-
-  loadWeather();
-})();
-</script>
-<script>
-(function(){
-  const players=document.querySelectorAll('.players > details.player-item');
-  players.forEach(function(player){
-    const summary=player.querySelector(':scope > summary');
-    if(!summary) return;
-    summary.addEventListener('click', function(){
-      players.forEach(function(other){
-        if(other !== player) other.removeAttribute('open');
-      });
-    });
-  });
-})();
-</script>
-<script>
 document.addEventListener('DOMContentLoaded', function () {
   /* ---------- Schedule view toggle ---------- */
   const viewInputs = Array.from(document.querySelectorAll('input[name="scheduleView"]'));
@@ -1085,7 +1004,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!label) return;
       label.setAttribute('role', 'tab');
       label.setAttribute('tabindex', label === (input.id === 'viewPlayer' ? playerLabel : monthLabel) ? '0' : '-1');
-      label.setAttribute('aria-selected', String(label.getAttribute('for') === input.id));
+      const selected = label.getAttribute('for') === input.id;
+      label.setAttribute('aria-selected', String(selected));
+      label.setAttribute('aria-controls', input.id === 'viewPlayer' ? 'playerView' : 'monthView');
     });
 
     viewInputs.forEach(radio => {
@@ -1095,6 +1016,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const playerView = document.getElementById('playerView');
     const monthView = document.getElementById('monthView');
+    if (playerView) playerView.setAttribute('role', 'tabpanel');
+    if (monthView) monthView.setAttribute('role', 'tabpanel');
     if (playerView) playerView.hidden = input.id !== 'viewPlayer';
     if (monthView) monthView.hidden = input.id !== 'viewMonth';
 
@@ -1147,6 +1070,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendar = panel.querySelector(':scope > .player-calendar-view');
     const games = panel.querySelector(':scope > .player-games-view');
 
+    const calendarId = calendar?.id || '';
+    const gamesId = games?.id || '';
+    if (calendar) calendar.setAttribute('role', 'tabpanel');
+    if (games) games.setAttribute('role', 'tabpanel');
+
     function setPlayerView(input, moveFocus) {
       if (!input) return;
       input.checked = true;
@@ -1158,14 +1086,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
       buttons.forEach(button => {
         const selected = button.htmlFor === input.id;
+        const targetId = input.id.endsWith('-calendar') ? calendarId : gamesId;
         button.setAttribute('role', 'tab');
         button.setAttribute('aria-selected', String(selected));
+        button.setAttribute('aria-controls', targetId);
         button.tabIndex = selected ? 0 : -1;
       });
 
       const showCalendar = input.id.endsWith('-calendar');
-      if (calendar) calendar.classList.toggle('is-hidden', !showCalendar);
-      if (games) games.classList.toggle('is-hidden', showCalendar);
+      if (calendar) calendar.hidden = !showCalendar;
+      if (games) games.hidden = showCalendar;
+
+      if (calendar) calendar.setAttribute('aria-hidden', String(!showCalendar));
+      if (games) games.setAttribute('aria-hidden', String(showCalendar));
 
       if (moveFocus) {
         toggle.querySelector('label[for="' + input.id + '"]')?.focus();

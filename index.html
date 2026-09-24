@@ -1132,8 +1132,10 @@ document.addEventListener('DOMContentLoaded', function () {
     setPlayerView(radios.find(r => r.checked) || radios[0], false);
   });
 
-  /* ---------- Only one player card open at a time ---------- */
+  /* ---------- Only one player card open at a time + auto-scroll ---------- */
   const players = Array.from(document.querySelectorAll('.players > details.player-item'));
+  let activePlayer = null;
+
   players.forEach(player => {
     const summary = player.querySelector(':scope > summary');
     if (!summary) return;
@@ -1145,10 +1147,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     player.addEventListener('toggle', function () {
-      if (!player.open) return;
+      if (!player.open) {
+        if (activePlayer === player) activePlayer = null;
+        return;
+      }
+
+      const switchingPlayers = activePlayer && activePlayer !== player;
+
       players.forEach(other => {
         if (other !== player) other.removeAttribute('open');
       });
+
+      activePlayer = player;
+
+      /* When switching from one expanded player to another, place the new
+         player card at the top of the viewport automatically. */
+      if (switchingPlayers) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            player.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+      }
     });
   });
 

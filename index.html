@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<title>DS Padel Regular Player Pool</title>
+<style>
+:root {
+  --bg:#061522; --card:#0B2236; --text:#F4F7F5; --muted:#B3C3CC;
+  --line:#1D3A50; --dark:#04101A; --blue:#0A2A43; --special:#19D3C5;
+  --teal:#19D3C5; --off:#F4F7F5;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.shell{max-width:820px;margin:0 auto;padding:20px 16px 42px}
+.hero{background:linear-gradient(145deg,#04101A,#0B2A43);color:#F4F7F5;border-radius:0 0 34px 34px;padding:28px 22px 24px;box-shadow:0 18px 45px rgba(0,0,0,.16);margin:-20px -16px 34px}
+.title{font-size:38px;line-height:1;font-weight:850;letter-spacing:-1.5px;margin:4px 0 8px}
+.location{font-size:15px;color:#91A5B2}
+.special{display:flex;align-items:center;gap:14px;margin-top:26px;padding:14px 16px;border-radius:18px;background:rgba(25,211,197,.09);border:1px solid rgba(25,211,197,.25)}
+.special-badge,.special-tag{font-weight:850;letter-spacing:1px;background:var(--teal);color:#04101A;border-radius:11px;padding:8px 12px;font-size:12px}
+.special strong{display:block;font-size:18px}
+.special span{display:block;color:#B7C5CD;margin-top:4px;font-size:14px}
+.section-title{font-size:28px;margin:0 0 6px;letter-spacing:-.7px}
+.section-sub{font-size:16px;color:var(--muted);margin:0 0 20px}
+.players{display:grid;gap:12px}
+.player-item{display:block}
+.player-item > summary{list-style:none}
+.player-item > summary::-webkit-details-marker{display:none}
+.player{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:17px 18px;box-shadow:0 8px 24px rgba(0,0,0,.30);transition:transform .2s ease,box-shadow .2s ease,border-radius .25s ease}
+.player:active{transform:scale(.985)}
+.player-left{display:flex;align-items:center;gap:13px}
+.avatar{width:44px;height:44px;border-radius:14px;background:var(--teal);color:#04101A;display:grid;place-items:center;font-size:13px;font-weight:900}
+.player-name{font-size:19px;font-weight:800}
+.player-meta{font-size:13px;color:var(--muted);margin-top:3px}
+.arrow{font-size:29px;color:#19D3C5;font-weight:300;line-height:1;transition:transform .28s ease,color .28s ease}
+.player-item[open] > summary.player{border-radius:22px 22px 12px 12px;border-color:#19D3C5;box-shadow:0 10px 28px rgba(25,211,197,.14);background:#C9F7F2;color:#06202A}
+.player-item[open] .arrow{transform:rotate(90deg);color:#06202A}
+.panel-content{padding-top:10px;animation:panelIn .32s cubic-bezier(.2,.8,.25,1)}
+.panel{display:block}
+.pill{background:var(--teal);color:#04101A;border-radius:999px;padding:8px 12px;font-weight:900}
+
+.week{margin-top:14px}
+.week-title{font-size:18px;font-weight:850;margin:20px 4px 10px;display:flex;justify-content:space-between}
+.week-count{color:var(--muted);font-size:14px}
+.game{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:10px 0;box-shadow:0 7px 20px rgba(16,24,40,.05)}
+.game-date{width:48px;text-align:center;flex:none}
+.day{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase}
+.date{font-size:27px;font-weight:850;line-height:1.05}
+.game-info{flex:1;min-width:0}
+.time{font-size:17px;font-weight:800}
+.venue{font-size:13px;color:var(--muted);margin-top:4px}
+.special-game{border-color:#19D3C5;background:#0B3040;box-shadow:0 8px 22px rgba(25,211,197,.10)}
+.special-game .day{color:#9CC4C6}
+.special-game .date,.special-game .time{color:#F4F7F5}
+.special-game .venue{color:#A9D9D6}
+.special-game .special-tag{background:#19D3C5;color:#04101A}
+.special-tag{display:inline-block;padding:4px 7px;border-radius:7px;font-size:9px;margin-bottom:5px}
+.join{background:#19D3C5;color:#04101A;font-weight:850;font-size:13px;border-radius:12px;padding:11px 14px;flex:none}
+.note{background:#082B31;border:1px solid #176B6A;border-radius:16px;padding:13px 14px;color:#A9F2EC;font-size:13px;line-height:1.45;margin-top:14px}
+.full{margin-top:34px}
+.full-card{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.full-row{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:15px 16px;border-bottom:1px solid var(--line)}
+.full-row:last-child{border-bottom:0}
+.full-row.special-full{background:linear-gradient(135deg,#0B3040,#082532);border-color:#15566A}
+.full-row.special-full .full-date,.full-row.special-full .full-time,.full-row.special-full .names{color:#DDF9F6}
+.full-row.special-full .full-date{color:#19D3C5}
+.full-date{font-weight:850}
+.full-time{font-size:12px;color:var(--muted);margin-top:3px}
+.names{font-size:14px;line-height:1.4;align-self:center}
+.everyone{font-weight:800}
+.footer{text-align:center;color:#6F8795;font-size:12px;margin-top:28px}
+@keyframes cardFall{0%{opacity:0;transform:translateY(-85px) rotateX(-10deg) scale(.96)}65%{opacity:1;transform:translateY(7px) rotateX(2deg) scale(1.01)}82%{transform:translateY(-3px) scale(1)}100%{opacity:1;transform:none}}
+.player-item{animation:cardFall .72s cubic-bezier(.2,.85,.25,1.12) both}
+.player-item:nth-child(1){animation-delay:.15s}.player-item:nth-child(2){animation-delay:.30s}.player-item:nth-child(3){animation-delay:.45s}.player-item:nth-child(4){animation-delay:.60s}.player-item:nth-child(5){animation-delay:.75s}
+@keyframes panelIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:600px){.shell{padding:20px 12px 36px}.hero{margin:-20px -12px 30px;padding:25px 18px 22px}.title{font-size:34px}.full-row{grid-template-columns:92px 1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width: 901px){
+  .shell{max-width:980px;padding-left:24px;padding-right:24px}
+  .hero{margin-left:-24px;margin-right:-24px}
+  .calendar-wrap{max-width:760px;margin-left:auto;margin-right:auto}
+  .calendar-grid{gap:7px}
+  .calendar-day{min-height:74px}
+  .group-calendar{max-width:900px;margin:34px auto 0}
+  .group-calendar-card{max-width:none;width:100%;margin:0;padding:18px}
+  .group-calendar-grid{gap:7px}
+  .group-cal-day{min-height:88px;padding:8px}
+  .calendar-heading strong{font-size:20px}
+}
+
+
+/* Teal + dark navy theme */
+.calendar-wrap{margin:18px 0 8px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:0 7px 20px rgba(0,0,0,.05)}
+.calendar-heading{display:flex;align-items:center;justify-content:space-between;margin:0 2px 12px}
+.calendar-heading strong{font-size:18px;letter-spacing:-.3px}
+.calendar-heading span{font-size:12px;color:var(--muted)}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(40px,1fr));gap:5px}
+.calendar-dow{font-size:10px;font-weight:850;color:var(--muted);text-align:center;padding:4px 0;text-transform:uppercase}
+.calendar-day{min-height:64px;border:1px solid #DCE5E5;border-radius:11px;padding:6px;background:#F4F7F5;display:flex;flex-direction:column;align-items:flex-start}
+.calendar-day.empty{background:transparent;border-color:transparent}
+.calendar-num{font-size:12px;font-weight:800;color:#50636F}
+.calendar-day.game-day{background:var(--teal);border-color:#11AFA3;color:#06202A}
+.calendar-day.game-day .calendar-num{color:#04101A}
+.calendar-game{display:block;width:100%;margin-top:5px;font-size:9px;line-height:1.15;font-weight:850;color:#04101A;text-decoration:none}
+.calendar-game .cal-time{display:block;font-size:8px;font-weight:700;margin-top:2px}
+.calendar-day.special-day{box-shadow:inset 0 0 0 2px #19D3C5;background:#082532;color:#DDF9F6}.calendar-day.special-day .calendar-num,.calendar-day.special-day .calendar-game{color:#19D3C5}
+.calendar-legend{display:flex;align-items:center;gap:7px;margin:10px 2px 0;font-size:11px;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:3px;background:var(--teal);border:1px solid #11AFA3}
+@media(max-width:600px){
+  .calendar-wrap{padding:10px}
+  .calendar-grid{gap:4px}
+  .calendar-day{min-height:61px;padding:5px}
+  .calendar-game{font-size:8px}
+  .calendar-game .cal-time{font-size:7px}
+}
+
+
+/* Full group calendar */
+.group-calendar{margin:34px auto 0;max-width:900px;width:100%}
+.group-calendar .section-title,.group-calendar .section-sub{padding-left:2px;padding-right:2px}
+.group-calendar-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,.18);width:100%;overflow:hidden}
+.group-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;width:100%}
+.group-cal-day{min-width:0;min-height:86px;border:1px solid #DCE5E5;border-radius:13px;padding:7px;background:#F4F7F5;overflow:hidden}
+.group-cal-day.empty{background:transparent;border:0;min-height:42px}
+.group-cal-day.game-day{background:var(--teal);border-color:#11AFA3;color:#06202A}
+.group-cal-day.special-day{box-shadow:inset 0 0 0 2px #19D3C5;background:#082532;color:#DDF9F6}
+.group-cal-day.special-day .group-cal-time,.group-cal-day.special-day .group-cal-names{color:#19D3C5}
+.group-cal-time{font-size:10px;font-weight:850;margin-top:5px}
+.group-cal-names{font-size:9px;line-height:1.25;font-weight:750;margin-top:6px;overflow-wrap:anywhere}
+.group-special{display:inline-block;background:#04101A;color:var(--teal);font-size:8px;font-weight:900;padding:3px 5px;border-radius:5px;margin-top:5px}
+.special-legend{background:#04101A;border-color:#19D3C5}
+@media(max-width:600px){
+  .group-calendar{margin-top:30px}
+  .group-calendar-card{padding:10px;border-radius:20px}
+  .group-calendar-grid{gap:4px}
+  .group-cal-day{min-height:78px;padding:5px;border-radius:10px}
+  .group-cal-day.empty{min-height:28px}
+  .group-cal-time{font-size:9px}
+  .group-cal-names{font-size:8px;line-height:1.2}
+  .group-special{font-size:7px;padding:2px 4px}
+}
+
+
+
+.month-inner{width:100%;max-width:900px;margin:0 auto}
+#monthView{width:100%}
+.full{max-width:900px;margin-left:auto;margin-right:auto}
+@media(max-width:600px){.month-inner{width:100%}.full{width:100%}}
+
+/* UX improvements */
+.view-radio{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;opacity:0;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+.view-toggle{display:flex;gap:6px;background:#071B2A;border:1px solid var(--line);border-radius:16px;padding:5px;margin:0 0 22px;position:relative;z-index:10}
+.view-btn{flex:1;border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:850;padding:11px 12px;border-radius:11px;cursor:pointer;transition:.2s ease;text-align:center}
+#viewPlayer:checked ~ .view-toggle label[for="viewPlayer"],#viewMonth:checked ~ .view-toggle label[for="viewMonth"]{background:var(--teal);color:#04101A;box-shadow:0 5px 16px rgba(25,211,197,.18)}
+#viewPlayer:focus-visible ~ .view-toggle label[for="viewPlayer"],#viewMonth:focus-visible ~ .view-toggle label[for="viewMonth"]{outline:3px solid #7AF5EC;outline-offset:3px}
+.view-btn:focus-visible,.player:focus-visible,.join:focus-visible{outline:3px solid #7AF5EC;outline-offset:3px}
+#viewMonth:not(:checked) ~ #monthView,#viewPlayer:not(:checked) ~ #playerView{display:none!important}
+.hero{position:relative;z-index:1}
+.weather{position:static;margin-top:18px;background:#0B2236;border:1px solid #24506A;border-radius:18px;padding:13px 15px;box-shadow:0 10px 28px rgba(0,0,0,.22)}
+.weather-main{min-width:0}
+.weather-label{font-size:10px;font-weight:850;letter-spacing:.8px;text-transform:uppercase;color:#7DEDE5}
+.weather-value{font-size:15px;font-weight:850;margin-top:3px;line-height:1.25}
+.weather-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.game-actions{display:flex;align-items:center;gap:7px;flex:none}
+.calendar-day.empty,.group-cal-day.empty{border:0!important;min-height:38px}
+.group-cal-day.empty{background:transparent!important}
+.group-cal-names{font-size:11px;line-height:1.2;font-weight:700;margin-top:5px}
+.names-mobile{display:none}
+@media(max-width:600px){
+  .group-cal-time{font-size:11px}
+  .group-cal-names{font-size:11px}
+  .names-full{display:none}.names-mobile{display:inline}
+  .game-actions{gap:5px}
+  .weather{align-items:flex-start}
+}
+
+
+
+/* Final month-view desktop/mobile layout */
+#monthView{width:100%;padding:0 0 8px}
+#monthView .month-inner{width:100%;max-width:820px;margin:0 auto}
+#monthView .group-calendar{width:100%;max-width:820px;margin:28px auto 0}
+#monthView .group-calendar .section-title{font-size:30px;line-height:1.08;margin:0 0 7px}
+#monthView .group-calendar .section-sub{max-width:700px;font-size:15px;line-height:1.45;margin:0 0 16px}
+#monthView .group-calendar-card{width:100%;max-width:none;margin:0;padding:16px;border-radius:22px}
+#monthView .group-calendar-grid{grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+#monthView .group-cal-day{min-height:82px;padding:7px;border-radius:12px}
+#monthView .group-cal-day.empty{min-height:28px}
+#monthView .group-cal-names{font-size:9px;line-height:1.2}
+#monthView .group-cal-time{font-size:9px}
+#monthView .full{width:100%;max-width:820px;margin:28px auto 0}
+@media(max-width:600px){
+  #monthView{padding-left:12px;padding-right:12px}
+  #monthView .month-inner{max-width:100%}
+  #monthView .group-calendar{margin-top:24px}
+  #monthView .group-calendar .section-title{font-size:27px}
+  #monthView .group-calendar .section-sub{font-size:14px;margin-bottom:14px}
+  #monthView .group-calendar-card{padding:10px;border-radius:20px}
+  #monthView .group-calendar-grid{gap:4px}
+  #monthView .group-cal-day{min-height:72px;padding:5px;border-radius:10px}
+  #monthView .group-cal-day.empty{min-height:24px}
+  #monthView .group-cal-time{font-size:9px}
+  #monthView .group-cal-names{font-size:8px;line-height:1.18}
+  #monthView .group-special{font-size:7px;padding:2px 4px}
+  #monthView .full{margin-top:24px}
+}
+
+
+/* FINAL CLEAN FULL-MONTH LAYOUT */
+#monthView{width:100%;padding:0 0 24px}
+#monthView .month-inner{width:100%;max-width:820px;margin:0 auto}
+#monthView .group-calendar{width:100%;max-width:820px;margin:26px auto 0}
+#monthView .group-calendar .section-title{font-size:32px;line-height:1.05;margin:0 0 8px}
+#monthView .group-calendar .section-sub{max-width:680px;font-size:15px;line-height:1.45;margin:0 0 18px}
+#monthView .group-calendar-card{width:100%;padding:16px;border-radius:22px;overflow:hidden}
+#monthView .group-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+#monthView .group-cal-day{height:86px;min-height:0;padding:8px;border-radius:12px;overflow:hidden}
+#monthView .group-cal-day.empty{height:20px;min-height:0;background:transparent!important;border:0!important}
+#monthView .group-cal-time{font-size:10px;line-height:1.05;margin-top:5px}
+#monthView .group-cal-names{font-size:10px;line-height:1.15;margin-top:6px;white-space:normal;overflow:visible;text-overflow:clip}
+#monthView .names-mobile{display:none}
+#monthView .group-special{font-size:8px;padding:3px 5px;margin-top:5px}
+#monthView .calendar-legend{font-size:11px;margin-top:11px}
+#monthView .full{display:none}
+@media (max-width:600px){
+  #monthView{padding:0 0 20px}
+  #monthView .month-inner{max-width:none}
+  #monthView .group-calendar{margin-top:22px}
+  #monthView .group-calendar .section-title{font-size:29px;line-height:1.05;margin-bottom:7px}
+  #monthView .group-calendar .section-sub{font-size:14px;line-height:1.4;margin-bottom:16px}
+  #monthView .group-calendar-card{padding:10px;border-radius:20px}
+  #monthView .group-calendar-grid{gap:4px}
+  #monthView .group-cal-day{height:64px;min-height:0;padding:5px;border-radius:10px}
+  #monthView .group-cal-day.empty{height:12px}
+  #monthView .group-cal-time{font-size:9px;line-height:1.05;margin-top:4px}
+  #monthView .group-cal-names{font-size:9px;line-height:1.1;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:clip}
+  #monthView .names-full{display:none}
+  #monthView .names-mobile{display:inline}
+  #monthView .group-special{font-size:7px;padding:2px 4px;margin-top:4px}
+  #monthView .calendar-legend{font-size:10px;gap:6px;margin-top:9px}
+  #monthView .legend-dot{width:9px;height:9px}
+}
+@media (min-width:901px){
+  #monthView .group-calendar{max-width:820px}
+  #monthView .group-calendar-card{padding:18px}
+  #monthView .group-cal-day{height:88px}
+}
+
+
+/* Full-month calendar: compact, glanceable, interactive */
+#monthView .group-calendar{max-width:900px;margin:26px auto 0}
+#monthView .group-calendar .section-title{font-size:32px;line-height:1.08;margin:0 0 8px}
+#monthView .group-calendar .section-sub{font-size:16px;max-width:720px;margin:0 0 18px}
+#monthView .group-calendar-card{padding:16px;background:#0B2236;border-radius:24px}
+#monthView .group-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+#monthView .group-cal-day{height:88px;min-height:88px;padding:8px;border-radius:13px;position:relative;overflow:hidden;background:#102A3E;border:1px solid #21445A;color:#AFC0C9}
+#monthView .group-cal-day.empty{height:28px;min-height:28px;background:transparent!important;border:0!important}
+#monthView .group-cal-day:not(.game-day):not(.empty){background:#0E2638;border-color:#1B3B50}
+
+#monthView a.group-cal-day{text-decoration:none;color:inherit;display:block}
+#monthView a.group-cal-day:visited{color:inherit}
+#monthView .group-cal-day.game-day{background:#19D3C5;border-color:#19D3C5;color:#06202A;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+#monthView .group-cal-day.game-day:hover,#monthView .group-cal-day.game-day:focus-visible{transform:translateY(-2px);box-shadow:0 7px 18px rgba(25,211,197,.22);outline:none}
+#monthView .group-cal-day.game-day .calendar-num{color:#31535F}
+#monthView .group-cal-time{font-size:11px;line-height:1;font-weight:950;margin-top:8px;letter-spacing:.2px;color:#041A22}
+#monthView .group-cal-names{display:none!important}
+#monthView .group-cal-dots{position:absolute;left:8px;bottom:9px;display:flex;gap:4px;align-items:center}
+#monthView .group-cal-dots i{display:block;width:7px;height:7px;border-radius:50%;border:1px solid rgba(4,16,26,.28);background:#06202A}
+#monthView .group-cal-dots i:nth-child(2){background:#0A5960}
+#monthView .group-cal-dots i:nth-child(3){background:#0E8790}
+#monthView .group-cal-dots i:nth-child(4){background:#8BEDE6}
+#monthView .group-cal-dots.all i{background:#19D3C5;border-color:#8BEDE6}
+#monthView .group-cal-day.special-day{background:#082532;box-shadow:inset 0 0 0 2px #19D3C5;color:#DDF9F6}
+#monthView .group-cal-day.special-day .calendar-num,#monthView .group-cal-day.special-day .group-cal-time{color:#19D3C5}
+#monthView .group-special{display:inline-block;margin-top:7px;padding:3px 5px;border-radius:5px;background:#19D3C5;color:#06202A;font-size:7px;font-weight:950;letter-spacing:.7px}
+#monthView .calendar-legend .special-legend{background:#082532;border:2px solid #19D3C5;box-sizing:border-box}
+#monthView .month-games{max-width:900px;margin:28px auto 0}
+#monthView .month-games-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px}
+#monthView .month-games-head h3{margin:0;font-size:24px;letter-spacing:-.5px}
+#monthView .month-games-head p{margin:4px 0 0;color:var(--muted);font-size:14px}
+#monthView .month-games-head>span{color:var(--muted);font-size:13px;font-weight:800;white-space:nowrap}
+#monthView .month-games-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#monthView .month-game{scroll-margin-top:20px;display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:12px;background:#0B2236;border:1px solid #1D3A50;border-radius:17px;padding:12px 13px;transition:transform .15s ease,border-color .15s ease}
+#monthView .month-game:target{border-color:#19D3C5;box-shadow:0 0 0 2px rgba(25,211,197,.15)}
+#monthView .month-game:hover{transform:translateY(-1px);border-color:#19D3C5}
+#monthView .month-game-date{text-align:center;border-right:1px solid #1D3A50;padding-right:10px}
+#monthView .month-game-date b{display:block;font-size:9px;color:var(--muted);letter-spacing:.8px}
+#monthView .month-game-date strong{display:block;font-size:25px;line-height:1.05;margin-top:2px}
+#monthView .month-game-info{min-width:0}
+#monthView .month-game-info b{display:block;font-size:14px}
+#monthView .month-game-info span{display:block;color:var(--muted);font-size:11px;line-height:1.35;margin-top:3px;white-space:normal;overflow:visible;text-overflow:clip}
+#monthView .month-game-info em{display:inline-block;background:#19D3C5;color:#04101A;font-style:normal;font-size:8px;font-weight:900;letter-spacing:.7px;border-radius:5px;padding:3px 5px;margin-bottom:4px}
+#monthView .month-join{background:#19D3C5;color:#04101A;font-weight:900;font-size:11px;border-radius:10px;padding:9px 11px}
+#monthView .month-game-special{border-color:#19D3C5;background:#082532}
+#monthView .month-game-special .month-game-date strong{color:#19D3C5}
+@media(max-width:600px){
+  #monthView .group-calendar{max-width:100%;margin-top:22px}
+  #monthView .group-calendar .section-title{font-size:29px}
+  #monthView .group-calendar .section-sub{font-size:14px}
+  #monthView .group-calendar-card{padding:10px;border-radius:20px}
+  #monthView .group-calendar-grid{gap:4px}
+  #monthView .group-cal-day{height:70px;min-height:70px;padding:6px;border-radius:10px}
+  #monthView .group-cal-day.empty{height:14px;min-height:14px}
+  #monthView .group-cal-time{font-size:10px;margin-top:7px}
+  #monthView .group-cal-dots{left:6px;bottom:8px;gap:3px}
+  #monthView .group-cal-dots i{width:6px;height:6px}
+  #monthView .group-special{margin-top:6px;font-size:6px;padding:2px 4px}
+  #monthView .month-games{margin-top:24px}
+  #monthView .month-games-head h3{font-size:22px}
+  #monthView .month-games-head p{font-size:13px}
+  #monthView .month-games-grid{grid-template-columns:1fr;gap:8px}
+  #monthView .month-game{grid-template-columns:50px 1fr auto;padding:11px 10px;gap:10px;border-radius:15px}
+  #monthView .month-game-date strong{font-size:23px}
+  #monthView .month-game-info b{font-size:13px}
+  #monthView .month-game-info span{font-size:10px}
+  #monthView .month-join{font-size:10px;padding:8px 10px}
+}
+
+
+/* Player calendar/list toggle — CSS-only so it works even when local HTML JavaScript is unavailable */
+.player-view-radio{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.player-view-toggle{display:flex;gap:4px;padding:4px;margin:0 0 16px;background:#081b2a;border:1px solid var(--line);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.player-view-btn{display:flex;align-items:center;justify-content:center;appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:850;font-size:14px;line-height:1;padding:12px 16px;border-radius:10px;cursor:pointer;flex:1;transition:background .18s ease,color .18s ease,transform .18s ease}
+.player-view-btn:hover{color:#fff}
+.player-view-btn:focus-visible{outline:3px solid #19D3C5;outline-offset:2px}
+.player-calendar-view,.player-games-view{animation:playerViewIn .2s ease}
+.player-games-view{display:none}
+.player-view-radio[id$="-calendar"]:checked ~ .player-view-toggle label[for$="-calendar"],
+.player-view-radio[id$="-games"]:checked ~ .player-view-toggle label[for$="-games"]{background:var(--teal);color:#06202A;box-shadow:0 4px 14px rgba(25,211,197,.16)}
+.player-view-radio[id$="-games"]:checked ~ .player-calendar-view{display:none !important}
+.player-view-radio[id$="-games"]:checked ~ .player-games-view{display:block !important}
+@keyframes playerViewIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(max-width:600px){
+  .player-view-toggle{margin:0 0 14px}
+  .player-view-btn{font-size:14px;padding:12px 10px}
+}
+
+/* Match player calendars to the Full Month calendar theme */
+.player-calendar-view .calendar-day{
+  background:#0B2236;
+  border-color:#173A52;
+  color:#91A5B2;
+}
+.player-calendar-view .calendar-day.empty{
+  background:transparent;
+  border-color:transparent;
+}
+.player-calendar-view .calendar-day.game-day{
+  background:#19D3C5;
+  border-color:#11AFA3;
+  color:#06202A;
+}
+.player-calendar-view .calendar-day.game-day .calendar-num{
+  color:#06202A;
+}
+.player-calendar-view .calendar-day.special-day{
+  background:#082532;
+  border-color:#19D3C5;
+  color:#DDF9F6;
+  box-shadow:inset 0 0 0 2px #19D3C5;
+}
+.player-calendar-view .calendar-day.special-day .calendar-num,
+.player-calendar-view .calendar-day.special-day .calendar-game{
+  color:#19D3C5;
+}
+.player-calendar-view .calendar-dow{color:#91A5B2}
+
+/* Accessibility refinements */
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.view-toggle,.player-view-toggle{role:radiogroup}
+.special{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+#monthView .month-game-info span{white-space:normal;overflow:visible;text-overflow:clip}
+@media(max-width:600px){#monthView .month-game-info span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="hero">
+<div class="title">DS Padel Regular Player Pool</div>
+<div class="location">Court 1 · Dubai South – Central Park</div>
+<a class="special" href="#game22" aria-label="22 October special game, 8:00 to 10:00 PM, everyone is invited">
+<div class="special-badge">SPECIAL</div>
+<div><strong>22 Oct · 8:00–10:00 PM</strong><span>2-hour session · Everyone is invited</span></div>
+</a>
+<div aria-live="polite" class="weather">
+<div class="weather-main"><div class="weather-label" id="weatherLabel">GAME CONDITIONS · NEXT GAME · 12 OCT · 9–10 PM</div><div class="weather-value" id="weatherValue">☀️ Temperature · 💧 Humidity — Forecast available closer to game</div><div class="weather-meta" id="weatherMeta">Dubai South</div></div>
+</div>
+</header>
+<div aria-label="Theme options" class="theme-options" role="radiogroup">
+</div>
+<input checked="" class="view-radio" id="viewPlayer" name="scheduleView" type="radio"/>
+<input class="view-radio" id="viewMonth" name="scheduleView" type="radio"/>
+<div aria-label="Schedule view" class="view-toggle" role="radiogroup">
+<label class="view-btn" for="viewPlayer">View by Player</label>
+<label class="view-btn" for="viewMonth">View Full Month</label>
+</div>
+<div id="playerView">
+<section id="players">
+<h2 class="section-title">Your schedule</h2>
+<div class="players"><details class="player-item"><summary class="player"><div class="player-left"><div class="avatar">AZ</div><div><div class="player-name">Azhar</div><div class="player-meta">7 games · incl. special</div></div></div><div class="arrow">›</div></summary><div class="panel-content"><div class="panel" id="azhar"><input class="player-view-radio" id="azhar-calendar" name="azhar-view" type="radio" checked>
+<input class="player-view-radio" id="azhar-games" name="azhar-view" type="radio">
+<div aria-label="Player schedule view" class="player-view-toggle" role="radiogroup"><label class="player-view-btn" for="azhar-calendar">Calendar</label><label class="player-view-btn" for="azhar-games">Games</label></div>
+<div class="calendar-wrap player-calendar-view">
+<div class="calendar-heading">
+<strong>October 2026</strong>
+<span>Tap a game to JOIN</span>
+</div>
+<div class="calendar-grid"><div class="calendar-dow">MON</div><div class="calendar-dow">TUE</div><div class="calendar-dow">WED</div><div class="calendar-dow">THU</div><div class="calendar-dow">FRI</div><div class="calendar-dow">SAT</div><div class="calendar-dow">SUN</div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day"><div class="calendar-num">1</div></div><div class="calendar-day"><div class="calendar-num">2</div></div><div class="calendar-day"><div class="calendar-num">3</div></div><div class="calendar-day"><div class="calendar-num">4</div></div><div class="calendar-day"><div class="calendar-num">5</div></div><div class="calendar-day"><div class="calendar-num">6</div></div><div class="calendar-day"><div class="calendar-num">7</div></div><div class="calendar-day"><div class="calendar-num">8</div></div><div class="calendar-day"><div class="calendar-num">9</div></div><div class="calendar-day"><div class="calendar-num">10</div></div><div class="calendar-day"><div class="calendar-num">11</div></div><div class="calendar-day game-day">
+<div class="calendar-num">12</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/PPCvJ" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">13</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/QFPa3" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">14</div></div><div class="calendar-day"><div class="calendar-num">15</div></div><div class="calendar-day game-day">
+<div class="calendar-num">16</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/JV37f" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">17</div></div><div class="calendar-day"><div class="calendar-num">18</div></div><div class="calendar-day game-day">
+<div class="calendar-num">19</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/pYIyK" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">20</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/UCdGg" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">21</div></div><div class="calendar-day game-day special-day">
+<div class="calendar-num">22</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">SPECIAL</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">23</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/MMS2p" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">24</div></div><div class="calendar-day"><div class="calendar-num">25</div></div><div class="calendar-day"><div class="calendar-num">26</div></div><div class="calendar-day"><div class="calendar-num">27</div></div><div class="calendar-day"><div class="calendar-num">28</div></div><div class="calendar-day"><div class="calendar-num">29</div></div><div class="calendar-day"><div class="calendar-num">30</div></div><div class="calendar-day"><div class="calendar-num">31</div></div><div class="calendar-day empty"></div></div>
+<div class="calendar-legend"><span class="legend-dot"></span> Your scheduled game</div>
+</div><div class="player-games-view"><div class="week">
+<div class="week-title">12–16 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Mon</div><div class="date">12</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/PPCvJ" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Tue</div><div class="date">13</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/QFPa3" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Fri</div><div class="date">16</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/JV37f" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div><div class="week">
+<div class="week-title">19–23 October <span class="week-count">4 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Mon</div><div class="date">19</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/pYIyK" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Tue</div><div class="date">20</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/UCdGg" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game special-game">
+<div class="game-date"><div class="day">Thu</div><div class="date">22</div></div>
+<div class="game-info">
+<div class="special-tag">Special</div>
+<div class="time">8:00–10:00 PM</div>
+<div class="venue">Everyone · Court 1</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Fri</div><div class="date">23</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/MMS2p" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div><div class="note">Your 22 Oct game is the special everyone-invited session, so this week has 4 games instead of the usual 3.</div></div>
+
+
+
+</div></div></details><details class="player-item"><summary class="player"><div class="player-left"><div class="avatar">DA</div><div><div class="player-name">Daniel</div><div class="player-meta">6 games · incl. special</div></div></div><div class="arrow">›</div></summary><div class="panel-content"><div class="panel" id="daniel"><input class="player-view-radio" id="daniel-calendar" name="daniel-view" type="radio" checked>
+<input class="player-view-radio" id="daniel-games" name="daniel-view" type="radio">
+<div aria-label="Player schedule view" class="player-view-toggle" role="radiogroup"><label class="player-view-btn" for="daniel-calendar">Calendar</label><label class="player-view-btn" for="daniel-games">Games</label></div>
+<div class="calendar-wrap player-calendar-view">
+<div class="calendar-heading">
+<strong>October 2026</strong>
+<span>Tap a game to JOIN</span>
+</div>
+<div class="calendar-grid"><div class="calendar-dow">MON</div><div class="calendar-dow">TUE</div><div class="calendar-dow">WED</div><div class="calendar-dow">THU</div><div class="calendar-dow">FRI</div><div class="calendar-dow">SAT</div><div class="calendar-dow">SUN</div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day"><div class="calendar-num">1</div></div><div class="calendar-day"><div class="calendar-num">2</div></div><div class="calendar-day"><div class="calendar-num">3</div></div><div class="calendar-day"><div class="calendar-num">4</div></div><div class="calendar-day"><div class="calendar-num">5</div></div><div class="calendar-day"><div class="calendar-num">6</div></div><div class="calendar-day"><div class="calendar-num">7</div></div><div class="calendar-day"><div class="calendar-num">8</div></div><div class="calendar-day"><div class="calendar-num">9</div></div><div class="calendar-day"><div class="calendar-num">10</div></div><div class="calendar-day"><div class="calendar-num">11</div></div><div class="calendar-day game-day">
+<div class="calendar-num">12</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/PPCvJ" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">13</div></div><div class="calendar-day game-day">
+<div class="calendar-num">14</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/tWxkd" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">15</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/4963j" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">16</div></div><div class="calendar-day"><div class="calendar-num">17</div></div><div class="calendar-day"><div class="calendar-num">18</div></div><div class="calendar-day game-day">
+<div class="calendar-num">19</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/pYIyK" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">20</div></div><div class="calendar-day game-day">
+<div class="calendar-num">21</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/Q6gb2" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day special-day">
+<div class="calendar-num">22</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">SPECIAL</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">23</div></div><div class="calendar-day"><div class="calendar-num">24</div></div><div class="calendar-day"><div class="calendar-num">25</div></div><div class="calendar-day"><div class="calendar-num">26</div></div><div class="calendar-day"><div class="calendar-num">27</div></div><div class="calendar-day"><div class="calendar-num">28</div></div><div class="calendar-day"><div class="calendar-num">29</div></div><div class="calendar-day"><div class="calendar-num">30</div></div><div class="calendar-day"><div class="calendar-num">31</div></div><div class="calendar-day empty"></div></div>
+<div class="calendar-legend"><span class="legend-dot"></span> Your scheduled game</div>
+</div><div class="player-games-view"><div class="week">
+<div class="week-title">12–16 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Mon</div><div class="date">12</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/PPCvJ" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Wed</div><div class="date">14</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/tWxkd" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Thu</div><div class="date">15</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/4963j" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div><div class="week">
+<div class="week-title">19–23 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Mon</div><div class="date">19</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/pYIyK" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Wed</div><div class="date">21</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/Q6gb2" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game special-game">
+<div class="game-date"><div class="day">Thu</div><div class="date">22</div></div>
+<div class="game-info">
+<div class="special-tag">Special</div>
+<div class="time">8:00–10:00 PM</div>
+<div class="venue">Everyone · Court 1</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div></div>
+
+
+</div></div></details><details class="player-item"><summary class="player"><div class="player-left"><div class="avatar">SH</div><div><div class="player-name">Shozeb</div><div class="player-meta">6 games · incl. special</div></div></div><div class="arrow">›</div></summary><div class="panel-content"><div class="panel" id="shozeb"><input class="player-view-radio" id="shozeb-calendar" name="shozeb-view" type="radio" checked>
+<input class="player-view-radio" id="shozeb-games" name="shozeb-view" type="radio">
+<div aria-label="Player schedule view" class="player-view-toggle" role="radiogroup"><label class="player-view-btn" for="shozeb-calendar">Calendar</label><label class="player-view-btn" for="shozeb-games">Games</label></div>
+<div class="calendar-wrap player-calendar-view">
+<div class="calendar-heading">
+<strong>October 2026</strong>
+<span>Tap a game to JOIN</span>
+</div>
+<div class="calendar-grid"><div class="calendar-dow">MON</div><div class="calendar-dow">TUE</div><div class="calendar-dow">WED</div><div class="calendar-dow">THU</div><div class="calendar-dow">FRI</div><div class="calendar-dow">SAT</div><div class="calendar-dow">SUN</div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day"><div class="calendar-num">1</div></div><div class="calendar-day"><div class="calendar-num">2</div></div><div class="calendar-day"><div class="calendar-num">3</div></div><div class="calendar-day"><div class="calendar-num">4</div></div><div class="calendar-day"><div class="calendar-num">5</div></div><div class="calendar-day"><div class="calendar-num">6</div></div><div class="calendar-day"><div class="calendar-num">7</div></div><div class="calendar-day"><div class="calendar-num">8</div></div><div class="calendar-day"><div class="calendar-num">9</div></div><div class="calendar-day"><div class="calendar-num">10</div></div><div class="calendar-day"><div class="calendar-num">11</div></div><div class="calendar-day game-day">
+<div class="calendar-num">12</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/PPCvJ" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">13</div></div><div class="calendar-day"><div class="calendar-num">14</div></div><div class="calendar-day game-day">
+<div class="calendar-num">15</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/4963j" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">16</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/JV37f" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">17</div></div><div class="calendar-day"><div class="calendar-num">18</div></div><div class="calendar-day game-day">
+<div class="calendar-num">19</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/pYIyK" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">20</div></div><div class="calendar-day"><div class="calendar-num">21</div></div><div class="calendar-day game-day special-day">
+<div class="calendar-num">22</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">SPECIAL</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">23</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/MMS2p" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">24</div></div><div class="calendar-day"><div class="calendar-num">25</div></div><div class="calendar-day"><div class="calendar-num">26</div></div><div class="calendar-day"><div class="calendar-num">27</div></div><div class="calendar-day"><div class="calendar-num">28</div></div><div class="calendar-day"><div class="calendar-num">29</div></div><div class="calendar-day"><div class="calendar-num">30</div></div><div class="calendar-day"><div class="calendar-num">31</div></div><div class="calendar-day empty"></div></div>
+<div class="calendar-legend"><span class="legend-dot"></span> Your scheduled game</div>
+</div><div class="player-games-view"><div class="week">
+<div class="week-title">12–16 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Mon</div><div class="date">12</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/PPCvJ" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Thu</div><div class="date">15</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/4963j" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Fri</div><div class="date">16</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/JV37f" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div><div class="week">
+<div class="week-title">19–23 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Mon</div><div class="date">19</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/pYIyK" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game special-game">
+<div class="game-date"><div class="day">Thu</div><div class="date">22</div></div>
+<div class="game-info">
+<div class="special-tag">Special</div>
+<div class="time">8:00–10:00 PM</div>
+<div class="venue">Everyone · Court 1</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Fri</div><div class="date">23</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/MMS2p" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div></div>
+
+
+</div></div></details><details class="player-item"><summary class="player"><div class="player-left"><div class="avatar">SI</div><div><div class="player-name">Sify</div><div class="player-meta">7 games · incl. special</div></div></div><div class="arrow">›</div></summary><div class="panel-content"><div class="panel" id="sify"><input class="player-view-radio" id="sify-calendar" name="sify-view" type="radio" checked>
+<input class="player-view-radio" id="sify-games" name="sify-view" type="radio">
+<div aria-label="Player schedule view" class="player-view-toggle" role="radiogroup"><label class="player-view-btn" for="sify-calendar">Calendar</label><label class="player-view-btn" for="sify-games">Games</label></div>
+<div class="calendar-wrap player-calendar-view">
+<div class="calendar-heading">
+<strong>October 2026</strong>
+<span>Tap a game to JOIN</span>
+</div>
+<div class="calendar-grid"><div class="calendar-dow">MON</div><div class="calendar-dow">TUE</div><div class="calendar-dow">WED</div><div class="calendar-dow">THU</div><div class="calendar-dow">FRI</div><div class="calendar-dow">SAT</div><div class="calendar-dow">SUN</div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day"><div class="calendar-num">1</div></div><div class="calendar-day"><div class="calendar-num">2</div></div><div class="calendar-day"><div class="calendar-num">3</div></div><div class="calendar-day"><div class="calendar-num">4</div></div><div class="calendar-day"><div class="calendar-num">5</div></div><div class="calendar-day"><div class="calendar-num">6</div></div><div class="calendar-day"><div class="calendar-num">7</div></div><div class="calendar-day"><div class="calendar-num">8</div></div><div class="calendar-day"><div class="calendar-num">9</div></div><div class="calendar-day"><div class="calendar-num">10</div></div><div class="calendar-day"><div class="calendar-num">11</div></div><div class="calendar-day"><div class="calendar-num">12</div></div><div class="calendar-day game-day">
+<div class="calendar-num">13</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/QFPa3" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">14</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/tWxkd" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">15</div></div><div class="calendar-day game-day">
+<div class="calendar-num">16</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/JV37f" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">17</div></div><div class="calendar-day"><div class="calendar-num">18</div></div><div class="calendar-day"><div class="calendar-num">19</div></div><div class="calendar-day game-day">
+<div class="calendar-num">20</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/UCdGg" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">21</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/Q6gb2" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day special-day">
+<div class="calendar-num">22</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">SPECIAL</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">23</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/MMS2p" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">24</div></div><div class="calendar-day"><div class="calendar-num">25</div></div><div class="calendar-day"><div class="calendar-num">26</div></div><div class="calendar-day"><div class="calendar-num">27</div></div><div class="calendar-day"><div class="calendar-num">28</div></div><div class="calendar-day"><div class="calendar-num">29</div></div><div class="calendar-day"><div class="calendar-num">30</div></div><div class="calendar-day"><div class="calendar-num">31</div></div><div class="calendar-day empty"></div></div>
+<div class="calendar-legend"><span class="legend-dot"></span> Your scheduled game</div>
+</div><div class="player-games-view"><div class="week">
+<div class="week-title">12–16 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Tue</div><div class="date">13</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/QFPa3" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Wed</div><div class="date">14</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/tWxkd" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Fri</div><div class="date">16</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/JV37f" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div><div class="week">
+<div class="week-title">19–23 October <span class="week-count">4 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Tue</div><div class="date">20</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/UCdGg" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Wed</div><div class="date">21</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/Q6gb2" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game special-game">
+<div class="game-date"><div class="day">Thu</div><div class="date">22</div></div>
+<div class="game-info">
+<div class="special-tag">Special</div>
+<div class="time">8:00–10:00 PM</div>
+<div class="venue">Everyone · Court 1</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Fri</div><div class="date">23</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/MMS2p" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div><div class="note">Your 22 Oct game is the special everyone-invited session, so this week has 4 games instead of the usual 3.</div></div>
+
+
+
+</div></div></details><details class="player-item"><summary class="player"><div class="player-left"><div class="avatar">OM</div><div><div class="player-name">Omer</div><div class="player-meta">6 games · incl. special</div></div></div><div class="arrow">›</div></summary><div class="panel-content"><div class="panel" id="umer"><input class="player-view-radio" id="umer-calendar" name="umer-view" type="radio" checked>
+<input class="player-view-radio" id="umer-games" name="umer-view" type="radio">
+<div aria-label="Player schedule view" class="player-view-toggle" role="radiogroup"><label class="player-view-btn" for="umer-calendar">Calendar</label><label class="player-view-btn" for="umer-games">Games</label></div>
+<div class="calendar-wrap player-calendar-view">
+<div class="calendar-heading">
+<strong>October 2026</strong>
+<span>Tap a game to JOIN</span>
+</div>
+<div class="calendar-grid"><div class="calendar-dow">MON</div><div class="calendar-dow">TUE</div><div class="calendar-dow">WED</div><div class="calendar-dow">THU</div><div class="calendar-dow">FRI</div><div class="calendar-dow">SAT</div><div class="calendar-dow">SUN</div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day empty"></div><div class="calendar-day"><div class="calendar-num">1</div></div><div class="calendar-day"><div class="calendar-num">2</div></div><div class="calendar-day"><div class="calendar-num">3</div></div><div class="calendar-day"><div class="calendar-num">4</div></div><div class="calendar-day"><div class="calendar-num">5</div></div><div class="calendar-day"><div class="calendar-num">6</div></div><div class="calendar-day"><div class="calendar-num">7</div></div><div class="calendar-day"><div class="calendar-num">8</div></div><div class="calendar-day"><div class="calendar-num">9</div></div><div class="calendar-day"><div class="calendar-num">10</div></div><div class="calendar-day"><div class="calendar-num">11</div></div><div class="calendar-day"><div class="calendar-num">12</div></div><div class="calendar-day game-day">
+<div class="calendar-num">13</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/QFPa3" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">14</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/tWxkd" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">15</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/4963j" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">16</div></div><div class="calendar-day"><div class="calendar-num">17</div></div><div class="calendar-day"><div class="calendar-num">18</div></div><div class="calendar-day"><div class="calendar-num">19</div></div><div class="calendar-day game-day">
+<div class="calendar-num">20</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/UCdGg" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day">
+<div class="calendar-num">21</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/Q6gb2" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">9–10</span>
+</a>
+</div><div class="calendar-day game-day special-day">
+<div class="calendar-num">22</div><span class="sr-only">Game day</span>
+<a class="calendar-game" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>
+                JOIN
+                <span class="cal-time">SPECIAL</span>
+</a>
+</div><div class="calendar-day"><div class="calendar-num">23</div></div><div class="calendar-day"><div class="calendar-num">24</div></div><div class="calendar-day"><div class="calendar-num">25</div></div><div class="calendar-day"><div class="calendar-num">26</div></div><div class="calendar-day"><div class="calendar-num">27</div></div><div class="calendar-day"><div class="calendar-num">28</div></div><div class="calendar-day"><div class="calendar-num">29</div></div><div class="calendar-day"><div class="calendar-num">30</div></div><div class="calendar-day"><div class="calendar-num">31</div></div><div class="calendar-day empty"></div></div>
+<div class="calendar-legend"><span class="legend-dot"></span> Your scheduled game</div>
+</div><div class="player-games-view"><div class="week">
+<div class="week-title">12–16 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Tue</div><div class="date">13</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/QFPa3" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Wed</div><div class="date">14</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/tWxkd" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Thu</div><div class="date">15</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/4963j" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div><div class="week">
+<div class="week-title">19–23 October <span class="week-count">3 games</span></div>
+<div class="game">
+<div class="game-date"><div class="day">Tue</div><div class="date">20</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/UCdGg" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game">
+<div class="game-date"><div class="day">Wed</div><div class="date">21</div></div>
+<div class="game-info">
+<div class="time">9:00–10:00 PM</div>
+<div class="venue">Moiz · Court 1 · Dubai South</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/Q6gb2" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+<div class="game special-game">
+<div class="game-date"><div class="day">Thu</div><div class="date">22</div></div>
+<div class="game-info">
+<div class="special-tag">Special</div>
+<div class="time">8:00–10:00 PM</div>
+<div class="venue">Everyone · Court 1</div>
+</div>
+<div class="game-actions"><a class="join" href="https://go.playo.app/PLAYOO/1zWsl" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span>JOIN</a></div>
+</div>
+</div></div>
+
+
+</div></div></details></div>
+</section>
+</div><div id="monthView"><div class="month-inner"><section class="group-calendar">
+<h2 class="section-title">Full group calendar</h2>
+<p class="section-sub">See every game, everyone playing, and the special 22 Oct session at a glance.</p>
+<div class="group-calendar-card">
+<div class="calendar-heading">
+<strong>October 2026</strong>
+<span>Full group</span>
+</div>
+<div class="group-calendar-grid"><div class="calendar-dow">MON</div><div class="calendar-dow">TUE</div><div class="calendar-dow">WED</div><div class="calendar-dow">THU</div><div class="calendar-dow">FRI</div><div class="calendar-dow">SAT</div><div class="calendar-dow">SUN</div><div class="group-cal-day empty"></div><div class="group-cal-day empty"></div><div class="group-cal-day empty"></div><div class="group-cal-day"><div class="calendar-num">1</div></div><div class="group-cal-day"><div class="calendar-num">2</div></div><div class="group-cal-day"><div class="calendar-num">3</div></div><div class="group-cal-day"><div class="calendar-num">4</div></div><div class="group-cal-day"><div class="calendar-num">5</div></div><div class="group-cal-day"><div class="calendar-num">6</div></div><div class="group-cal-day"><div class="calendar-num">7</div></div><div class="group-cal-day"><div class="calendar-num">8</div></div><div class="group-cal-day"><div class="calendar-num">9</div></div><div class="group-cal-day"><div class="calendar-num">10</div></div><div class="group-cal-day"><div class="calendar-num">11</div></div><a aria-label="12 October game; 9–10 PM; Moiz · Shozeb · Daniel · Azhar" class="group-cal-day game-day" href="#game12"><div class="calendar-num">12</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><a aria-label="13 October game; 9–10 PM; Moiz · Omer · Sify · Azhar" class="group-cal-day game-day" href="#game13"><div class="calendar-num">13</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><a aria-label="14 October game; 9–10 PM; Moiz · Daniel · Omer · Sify" class="group-cal-day game-day" href="#game14"><div class="calendar-num">14</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><a aria-label="15 October game; 9–10 PM; Moiz · Shozeb · Daniel · Omer" class="group-cal-day game-day" href="#game15"><div class="calendar-num">15</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><a aria-label="16 October game; 9–10 PM; Moiz · Shozeb · Sify · Azhar" class="group-cal-day game-day" href="#game16"><div class="calendar-num">16</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><div class="group-cal-day"><div class="calendar-num">17</div></div><div class="group-cal-day"><div class="calendar-num">18</div></div><a aria-label="19 October game; 9–10 PM; Moiz · Shozeb · Daniel · Azhar" class="group-cal-day game-day" href="#game19"><div class="calendar-num">19</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><a aria-label="20 October game; 9–10 PM; Moiz · Omer · Sify · Azhar" class="group-cal-day game-day" href="#game20"><div class="calendar-num">20</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><a aria-label="21 October game; 9–10 PM; Moiz · Daniel · Omer · Sify" class="group-cal-day game-day" href="#game21"><div class="calendar-num">21</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><a aria-label="22 October game; 8–10 PM; Everyone" class="group-cal-day game-day special-day" href="#game22"><div class="calendar-num">22</div><span class="sr-only">Game day</span><div class="group-cal-time">8–10 PM</div><span class="group-special">SPECIAL</span><div aria-hidden="true" class="group-cal-dots all"><i></i><i></i><i></i><i></i></div></a><a aria-label="23 October game; 9–10 PM; Moiz · Shozeb · Sify · Azhar" class="group-cal-day game-day" href="#game23"><div class="calendar-num">23</div><span class="sr-only">Game day</span><div class="group-cal-time">9–10 PM</div><div aria-hidden="true" class="group-cal-dots"><i></i><i></i><i></i><i></i></div></a><div class="group-cal-day"><div class="calendar-num">24</div></div><div class="group-cal-day"><div class="calendar-num">25</div></div><div class="group-cal-day"><div class="calendar-num">26</div></div><div class="group-cal-day"><div class="calendar-num">27</div></div><div class="group-cal-day"><div class="calendar-num">28</div></div><div class="group-cal-day"><div class="calendar-num">29</div></div><div class="group-cal-day"><div class="calendar-num">30</div></div><div class="group-cal-day"><div class="calendar-num">31</div></div><div class="group-cal-day empty"></div></div>
+<div class="calendar-legend">
+<span class="legend-dot"></span> Scheduled game
+      <span class="legend-dot special-legend"></span> Everyone
+    </div>
+</div>
+<div class="month-games">
+<div class="month-games-head"><div><h3>October games</h3><p>Tap JOIN to open the Playo booking.</p></div><span>10 sessions</span></div>
+<div class="month-games-grid">
+<a class="month-game" href="https://go.playo.app/PLAYOO/PPCvJ" id="game12" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>MON</b><strong>12</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Shozeb · Daniel · Azhar</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/QFPa3" id="game13" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>TUE</b><strong>13</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Omer · Sify · Azhar</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/tWxkd" id="game14" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>WED</b><strong>14</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Daniel · Omer · Sify</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/4963j" id="game15" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>THU</b><strong>15</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Shozeb · Daniel · Omer</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/JV37f" id="game16" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>FRI</b><strong>16</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Shozeb · Sify · Azhar</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/pYIyK" id="game19" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>MON</b><strong>19</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Shozeb · Daniel · Azhar</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/UCdGg" id="game20" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>TUE</b><strong>20</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Omer · Sify · Azhar</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/Q6gb2" id="game21" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>WED</b><strong>21</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Daniel · Omer · Sify</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game month-game-special" href="https://go.playo.app/PLAYOO/1zWsl" id="game22" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>THU</b><strong>22</strong></div><div class="month-game-info"><em>SPECIAL</em><b>8:00–10:00 PM · 2 hours</b><span>Everyone · Court 1</span></div><span class="month-join">JOIN</span></a>
+<a class="month-game" href="https://go.playo.app/PLAYOO/MMS2p" id="game23" rel="noopener noreferrer" target="_blank"><span class="sr-only">Opens Playo in a new tab.</span><div class="month-game-date"><b>FRI</b><strong>23</strong></div><div class="month-game-info"><b>9:00–10:00 PM</b><span>Moiz · Shozeb · Sify · Azhar</span></div><span class="month-join">JOIN</span></a>
+</div>
+</div>
+</section></div><div class="footer">October Padel · Court 1 · Dubai South – Central Park</div>
+</div>
+<script>
+(function(){
+  const weatherLabel=document.getElementById('weatherLabel');
+  const weatherValue=document.getElementById('weatherValue');
+  const weatherMeta=document.getElementById('weatherMeta');
+
+    const games=[
+    {date:'2026-10-12',time:'9–10 PM'},
+    {date:'2026-10-13',time:'9–10 PM'},
+    {date:'2026-10-14',time:'9–10 PM'},
+    {date:'2026-10-15',time:'9–10 PM'},
+    {date:'2026-10-16',time:'9–10 PM'},
+    {date:'2026-10-19',time:'9–10 PM'},
+    {date:'2026-10-20',time:'9–10 PM'},
+    {date:'2026-10-21',time:'9–10 PM'},
+    {date:'2026-10-22',time:'8–10 PM'},
+    {date:'2026-10-23',time:'9–10 PM'}
+  ];
+
+  function nextGame(){
+    const now=new Date();
+    return games.find(g=>new Date(g.date+'T23:59:59+04:00')>=now);
+  }
+
+  function formatDate(date){
+    return new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',timeZone:'Asia/Dubai'}).format(new Date(date+'T12:00:00+04:00'));
+  }
+
+  async function loadWeather(){
+    const game=nextGame();
+    if(!game){
+      weatherLabel.textContent='GAME CONDITIONS';
+      weatherValue.textContent='No upcoming games';
+      weatherMeta.textContent='Dubai South';
+      return;
+    }
+
+    const labelDate=formatDate(game.date).toUpperCase();
+    weatherLabel.textContent='GAME CONDITIONS · NEXT GAME · '+labelDate+' · '+game.time;
+    weatherValue.textContent='☀️ Temperature · 💧 Humidity — Forecast available closer to game';
+    weatherMeta.textContent='Dubai South';
+
+    const selected=new Date(game.date+'T12:00:00+04:00');
+    const now=new Date();
+    const diff=Math.ceil((selected-now)/86400000);
+    if(diff>16) return;
+
+    const url='https://api.open-meteo.com/v1/forecast?latitude=24.8964&longitude=55.1616&hourly=temperature_2m,relative_humidity_2m&timezone=Asia%2FDubai&forecast_days=16';
+    const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),3500));
+    try{
+      const r=await Promise.race([fetch(url,{cache:'no-store'}),timeout]);
+      if(!r.ok) throw new Error('weather');
+      const data=await r.json();
+      const times=data.hourly.time, temps=data.hourly.temperature_2m, hum=data.hourly.relative_humidity_2m;
+      const idx=times.findIndex(t=>t===game.date+'T21:00');
+      if(idx<0) throw new Error('hour');
+      weatherValue.textContent='☀️ '+Math.round(temps[idx])+'°C · 💧 '+Math.round(hum[idx])+'% Humidity';
+      weatherMeta.textContent='Dubai South · '+formatDate(game.date)+' '+game.time;
+    }catch(e){
+      weatherValue.textContent='Forecast unavailable right now';
+      weatherMeta.textContent='Dubai South · check closer to game time';
+    }
+  }
+
+  loadWeather();
+})();
+</script>
+<script>
+(function(){
+  const players=document.querySelectorAll('.players > details.player-item');
+  players.forEach(function(player){
+    const summary=player.querySelector(':scope > summary');
+    if(!summary) return;
+    summary.addEventListener('click', function(){
+      players.forEach(function(other){
+        if(other !== player) other.removeAttribute('open');
+      });
+    });
+  });
+})();
+</script>
+</div>
+
+</body>
+</html>
